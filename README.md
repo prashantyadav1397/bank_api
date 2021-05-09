@@ -1,4 +1,4 @@
-# bank_api
+# Bank API
 
 Hosting URL: https://bankrestfulapi.herokuapp.com/
 
