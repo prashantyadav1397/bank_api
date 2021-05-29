@@ -30,16 +30,39 @@ branchRouter.route("/all").get((req, res) => {
   });
 });
 
-//TODO get branches information using autocomplete branch name --- /api/branches/autocomplete/branch?branch=<>&limit=<>  --> Done
-branchRouter.route("/autocomplete/branch").get((req, res) => {
-  let branch = req.query.branch;
-  const limit = parseInt(req.query.limit);
-  let str = branch.toUpperCase();
+//TODO get branches information using autocomplete branch name ---  /api/branches/autocomplete/branch/:branch/limit/:limit  --> Done
+branchRouter
+  .route("/autocomplete/branch/:branch/limit/:limit")
+  .get((req, res) => {
+    let branch = req.params.branch;
+    const limit = parseInt(req.params.limit);
+    let str = branch.toUpperCase();
+    client.query(
+      "select * from branches where branch like " +
+        `'${str}%'` +
+        " order by ifsc ASC LIMIT $1;",
+      [limit],
+      (error, result) => {
+        if (error) {
+          res
+            .status(400)
+            .json({ message: "An error occured. Please try again later" });
+        }
+        if (result.rowCount === 0 || result.rowCount === null) {
+          res.status(404).json({ message: "Requested value is not present." });
+        } else {
+          res.status(200).json({ branches: result.rows });
+        }
+      }
+    );
+  });
+
+//TODO get a bank detail based on the IFSC code --- /api/branches/autocomplete/branch/ifsc/:ifsc/all --> Done
+branchRouter.route("/autocomplete/branch/ifsc/:ifsc/all").get((req, res) => {
+  let ifsc = req.params.ifsc;
+  let str = ifsc.toUpperCase();
   client.query(
-    "select * from branches where branch like " +
-      `'${str}%'` +
-      " order by ifsc ASC LIMIT $1;",
-    [limit],
+    "select * from branches where ifsc like " + `'${str}%'` + " ;",
     (error, result) => {
       if (error) {
         res
@@ -55,9 +78,9 @@ branchRouter.route("/autocomplete/branch").get((req, res) => {
   );
 });
 
-//TODO get a single bank detail based on the IFSC code --- /api/branches/autocomplete/branch/ifsc?ifsc=<> --> Done
-branchRouter.route("/autocomplete/branch/ifsc").get((req, res) => {
-  let ifsc = req.query.ifsc;
+//TODO get a single bank detail based on the IFSC code --- /api/branches/autocomplete/branch/ifsc/:ifsc --> Done
+branchRouter.route("/autocomplete/branch/ifsc/:ifsc").get((req, res) => {
+  let ifsc = req.params.ifsc;
   let str = ifsc.toUpperCase();
   client.query(
     "select * from branches where ifsc = " + `'${str}'` + " ;",
@@ -76,6 +99,9 @@ branchRouter.route("/autocomplete/branch/ifsc").get((req, res) => {
   );
 });
 
+//TODO update the query to params endpoint form here
+//
+//
 //TODO get all branches for a given city --- /api/branches/cities/city?city=<>  --> Done
 //TODO implement cacheing for bulk data reterival on frontend application
 branchRouter.route("/cities/city").get((req, res) => {
