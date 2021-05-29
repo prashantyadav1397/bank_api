@@ -57,6 +57,57 @@ branchRouter
     );
   });
 
+//TODO get bank branch detail based on bank ID --- /api/branches/autocomplete/branch/bank_id/:bank_id/all  --> Done
+branchRouter
+  .route("/autocomplete/branch/bank_id/:bank_id/all")
+  .get((req, res) => {
+    let bank_id = parseInt(req.params.bank_id);
+    client.query(
+      "select * from branches where bank_id = " +
+        `'${bank_id}'` +
+        " order by ifsc ASC;",
+
+      (error, result) => {
+        if (error) {
+          res
+            .status(400)
+            .json({ message: "An error occured. Please try again later" });
+        }
+        if (result.rowCount === 0 || result.rowCount === null) {
+          res.status(404).json({ message: "Requested value is not present." });
+        } else {
+          res.status(200).json({ branches: result.rows });
+        }
+      }
+    );
+  });
+
+//TODO get bank branch detail based on bank ID --- /api/branches/autocomplete/branch/bank_id/:bank_id/limit/:limit  --> Done
+branchRouter
+  .route("/autocomplete/branch/bank_id/:bank_id/limit/:limit")
+  .get((req, res) => {
+    let bank_id = parseInt(req.params.bank_id);
+    let limit = parseInt(req.params.limit);
+    client.query(
+      "select * from branches where bank_id = " +
+        `'${bank_id}'` +
+        " order by ifsc ASC LIMIT $1;",
+      [limit],
+      (error, result) => {
+        if (error) {
+          res
+            .status(400)
+            .json({ message: "An error occured. Please try again later" });
+        }
+        if (result.rowCount === 0 || result.rowCount === null) {
+          res.status(404).json({ message: "Requested value is not present." });
+        } else {
+          res.status(200).json({ branches: result.rows });
+        }
+      }
+    );
+  });
+
 //TODO get a bank detail based on the IFSC code --- /api/branches/autocomplete/branch/ifsc/:ifsc/all --> Done
 branchRouter.route("/autocomplete/branch/ifsc/:ifsc/all").get((req, res) => {
   let ifsc = req.params.ifsc;
@@ -201,6 +252,26 @@ branchRouter.route("/ifsc").get((req, res) => {
         res.status(404).json({ message: "Requested value is not present." });
       } else {
         res.status(200).json({ cities: result.rows });
+      }
+    }
+  );
+});
+
+//TODO get distinct bank id --- /api/branches/bank_id --> Done
+//TODO implement cacheing for bulk data reterival on frontend application
+branchRouter.route("/bank_id").get((req, res) => {
+  client.query(
+    "select DISTINCT bank_id from branches order by bank_id ASC;",
+    (error, result) => {
+      if (error) {
+        res
+          .status(400)
+          .json({ message: "An error occured. Please try again later" });
+      }
+      if (result.rowCount === 0 || result.rowCount === null) {
+        res.status(404).json({ message: "Requested value is not present." });
+      } else {
+        res.status(200).json({ bank_ids: result.rows });
       }
     }
   );
