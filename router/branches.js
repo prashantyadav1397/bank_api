@@ -99,13 +99,10 @@ branchRouter.route("/autocomplete/branch/ifsc/:ifsc").get((req, res) => {
   );
 });
 
-//TODO update the query to params endpoint form here
-//
-//
-//TODO get all branches for a given city --- /api/branches/cities/city?city=<>  --> Done
+//TODO get all branches for a given city --- /api/branches/cities/city/:city --> Done
 //TODO implement cacheing for bulk data reterival on frontend application
-branchRouter.route("/cities/city").get((req, res) => {
-  let city = req.query.city;
+branchRouter.route("/cities/city/:city").get((req, res) => {
+  let city = req.params.city;
   let str = city.toUpperCase();
   client.query(
     "select * from branches where city =" + `'${str}'` + " order by ifsc ASC;",
@@ -124,11 +121,11 @@ branchRouter.route("/cities/city").get((req, res) => {
   );
 });
 
-//TODO get branches information using city name and limit --- /api/branches/city?city=<>&limit=<>  --> Done
-branchRouter.route("/city").get((req, res) => {
-  let city = req.query.city;
+//TODO get branches information using city name and limit --- /api/branches/city/:city/limit/:limit  --> Done
+branchRouter.route("/city/:city/limit/:limit").get((req, res) => {
+  let city = req.params.city;
   let str = city.toUpperCase();
-  const limit = parseInt(req.query.limit);
+  const limit = parseInt(req.params.limit);
   client.query(
     "select * from branches where city = " +
       `'${str}'` +
@@ -148,6 +145,8 @@ branchRouter.route("/city").get((req, res) => {
     }
   );
 });
+
+//TODO update not required
 
 //TODO get distinct branch names --- /api/branches/branch  -->Done
 //TODO implement cacheing for bulk data reterival on frontend application
