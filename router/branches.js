@@ -146,8 +146,6 @@ branchRouter.route("/city/:city/limit/:limit").get((req, res) => {
   );
 });
 
-//TODO update not required
-
 //TODO get distinct branch names --- /api/branches/branch  -->Done
 //TODO implement cacheing for bulk data reterival on frontend application
 branchRouter.route("/branch").get((req, res) => {
