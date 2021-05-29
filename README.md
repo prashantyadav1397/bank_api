@@ -1,15 +1,15 @@
 # Bank API
 
-##Hosting URL: https://bankrestfulapi.herokuapp.com/
+Hosting URL: https://bankrestfulapi.herokuapp.com/
 
-##Routes
-##Default route --- /<br>
+## Routes<br>
+## Default route --- /<br>
 
-##Banks Route<br>
+## Banks Route<br>
 
 <li>get all banks --- /api/banks/all </li> <br>
 
-##Branches Routes<br>
+## Branches Routes<br>
 
 <li>get all bank branches data --- /api/branches/all </li> <br>
 <li>get branches information using autocomplete branch name ---  /api/branches/autocomplete/branch/:branch/limit/:limit </li> <br>
