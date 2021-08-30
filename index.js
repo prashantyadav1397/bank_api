@@ -16,6 +16,8 @@ app.use(
   cors({
     origin: "*",
     methods: ["GET"],
+    accepts: "*",
+    headers: "*",
   })
 );
 
